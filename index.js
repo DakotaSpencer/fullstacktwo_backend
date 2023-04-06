@@ -10,8 +10,6 @@ app.use((req,res,next) => {
     next();
 });
 
-app.get('/api')
-
 app.post('/register', routes.register)
 
 app.post('/login', routes.login)
