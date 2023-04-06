@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 const bcrypt = require("bcryptjs");
+const routes = require("routes/routes")
 
 const app = express();
 
@@ -9,7 +10,7 @@ app.use((req,res,next) => {
     next();
 });
 
-app.get('/api',routes.api)
+app.get('/api')
 
 app.post('/register', routes.register)
 
