@@ -1,0 +1,24 @@
+{
+  "name": "fullstacktwo_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DakotaSpencer/fullstacktwo_backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DakotaSpencer/fullstacktwo_backend/issues"
+  },
+  "homepage": "https://github.com/DakotaSpencer/fullstacktwo_backend#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.22"
+  }
+}
