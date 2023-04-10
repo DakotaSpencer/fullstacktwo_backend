@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 const bcrypt = require("bcryptjs");
-const routes = require("routes/routes")
+const routes = require("./routes/routes")
+const express = require("express")
 
 const app = express();
 
@@ -20,22 +21,22 @@ app.get('/user', routes.getUser)
 
 app.delete('/user', routes.deleteUser)
 
-app.post('/message', routes.createMessage)
+// app.post('/message', routes.createMessage)
 
-app.get('/messages', routes.getMessagesByUser)
+// app.get('/messages', routes.getMessagesByUser)
 
-app.get('/order', routes.getOrder)
+app.get('/order/:orderId', routes.getOrderById)
 
 app.post('/order', routes.createOrder)
 
-app.get('/ordersByShop', routes.getOrdersByShop)
-
-app.get('/ordersByUser', routes.getOrdersByUser)
-
 app.put('/order', routes.updateOrder)
 
-app.post('/wishlist', routes.addToWishlist)
+app.get('/orders/seller/:sellerId', routes.getOrdersFromSeller) //can have listing id and customer id in query params
 
-app.delete('/wishlist', routes.deleteFromWishlist)
+app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have seller id in query params
+
+app.get('/user/:userId/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
+
+app.delete('/wishlist/:wishlistId/delete/:listingId', routes.deleteFromWishlist)
 
 app.listen(3000);
