@@ -1,3 +1,14 @@
+const mysql = require('mysql');
+const bcrypt = require("bcryptjs");
+const { randomUUID } = require('crypto');
+
+var con = mysql.createConnection({
+    host: "catgirl-film-reviews.ccskcsxljvdp.us-east-1.rds.amazonaws.com",
+    user: "admin",
+    password: "tLXN4yhYHSkDK8R",
+    database: "cats_frontend_two"
+});
+
 exports.register = (req,res) => {
     res.send("register")
 }

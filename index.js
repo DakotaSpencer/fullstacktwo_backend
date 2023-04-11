@@ -1,5 +1,3 @@
-var mysql = require('mysql');
-const bcrypt = require("bcryptjs");
 const routes = require("./routes/routes")
 const express = require("express")
 
