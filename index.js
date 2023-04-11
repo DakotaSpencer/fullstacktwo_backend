@@ -9,6 +9,8 @@ app.use((req,res,next) => {
     next();
 });
 
+app.use(express.json());
+
 app.post('/register', routes.register)
 
 app.post('/login', routes.login)
