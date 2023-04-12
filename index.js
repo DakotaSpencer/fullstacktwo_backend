@@ -17,9 +17,9 @@ app.post('/login', routes.login)
 
 app.put('/user', routes.updateUser)
 
-app.get('/user', routes.getUser)
+app.get('/user/:id', routes.getUser)
 
-app.delete('/user', routes.deleteUser)
+app.delete('/user/:id', routes.deleteUser)
 
 // app.post('/message', routes.createMessage)
 
