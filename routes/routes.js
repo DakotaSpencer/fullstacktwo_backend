@@ -85,18 +85,19 @@ exports.updateUser = (req, res) => {
     // user_city,
     // user_state,
     // user_country
-    let sql = `UPDATE users SET 
-    user_email = '${userBody?.user_email}', 
-    user_password = '${userBody?.user_password}', 
-    user_display_name = '${userBody?.user_display_name}', 
-    user_first_name = '${userBody?.user_first_name}', 
-    user_last_name = '${userBody?.user_last_name}',
-    user_street_line1 = '${userBody?.user_street_line1}', 
-    user_street_line2 = '${userBody?.user_street_line2}', 
-    user_city = '${userBody?.user_city}', 
-    user_state = '${userBody?.user_state}', 
-    user_country = '${userBody?.user_country}'
-    WHERE user_uuid = '${userId}'`
+    let sql = `UPDATE users SET`;
+    if(userBody.user_email != null) { sql += ` user_email = ` + mysql.escape(userBody.user_email)}
+    if(userBody.user_password != null) { sql += ` user_password = ` + mysql.escape(userBody.user_password)}
+    if(userBody.user_display_name != null) { sql += ` user_display_name = ` + mysql.escape(userBody.user_display_name)}
+    if(userBody.user_first_name != null) { sql += ` user_first_name = ` + mysql.escape(userBody.user_first_name)}
+    if(userBody.user_last_name != null) { sql += ` user_last_name = ` + mysql.escape(userBody.user_last_name)}
+    if(userBody.user_display_name != null) { sql += ` user_display_name = ` + mysql.escape(userBody.user_display_name)}
+    if(userBody.user_street_line1 != null) { sql += ` user_street_line1 = ` + mysql.escape(userBody.user_street_line1)}
+    if(userBody.user_street_line2 != null) { sql += ` user_street_line2 = ` + mysql.escape(userBody.user_street_line2)}
+    if(userBody.user_city != null) { sql += ` user_city = ` + mysql.escape(userBody.user_city)}
+    if(userBody.user_state != null) { sql += ` user_state = ` + mysql.escape(userBody.user_state)}
+    if(userBody.user_country != null) { sql += ` user_country = ` + mysql.escape(userBody.user_country)}
+    sql += `WHERE user_uuid = ` + mysql.escape(userId)
     try {
         con.connect(function(err) {
             if (err) {
@@ -109,8 +110,8 @@ exports.updateUser = (req, res) => {
                     res.send(err)
                     return
                 }
-                res.status(200).json({
-                    data:result[0]
+                res.send({
+                    data: result[0]
                 })
             });
         });
