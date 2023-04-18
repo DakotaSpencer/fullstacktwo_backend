@@ -3,9 +3,9 @@ const express = require("express")
 
 const app = express();
 
-app.use((req,res,next) => {
-    res.header("Access-Control-Allow-Origin","*");
-    res.header("Access-Control-Allow-Headers","Origin, X-Requested-Width, Content-Type, Accept");
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-Width, Content-Type, Accept");
     next();
 });
 
@@ -15,7 +15,7 @@ app.post('/register', routes.register)
 
 app.post('/login', routes.login)
 
-app.put('/user', routes.updateUser)
+app.put('/user/:id', routes.updateUser)
 
 app.get('/user/:id', routes.getUser)
 
