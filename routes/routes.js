@@ -78,25 +78,78 @@ exports.updateUser = (req, res) => {
     let userId = req.params.id
     let userBody = req.body
     let sql = `UPDATE customers SET user_first_name = '${userBody.user_first_name}',  WHERE user_uuid = "${userId}"`
-    trySQL(req, res, sql);
+    try {
+        con.connect(function(err) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            console.log("Connected!");
+            con.query(sql, function (err, result) {
+                if (err) {
+                    res.send(err)
+                    return
+                }
+                res.status(200).json({
+                    data:result[0]
+                })
+            });
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
 }
 
-exports.getUser = (req, res) => {
+exports.getUser = async (req, res) => {
     let userId = req.params.id
     let sql = `SELECT * FROM users WHERE user_uuid = "${userId}"`
-    trySQL(req, res, sql);
+    try {
+        con.connect(function(err) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            console.log("Connected!");
+            con.query(sql, function (err, result) {
+                if (err) {
+                    res.send(err)
+                    return
+                }
+                res.status(200).json({
+                    data:result[0]
+                })
+            });
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
 
-    console.log("Count", sql.split(","))
-
+    console.log("Count",sql.split(","))
 }
 
 exports.deleteUser = (req, res) => {
     let userId = req.params.id
     let sql = `DELETE FROM users WHERE user_uuid = "${userId}"`
-    const result = trySQL(req, res, sql);
-
-    if (result[0])
-        res.status(200).json(result)
+    try {
+        con.connect(function(err) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            console.log("Connected!");
+            con.query(sql, function (err, result) {
+                if (err) {
+                    res.send(err)
+                    return
+                }
+                res.status(200).json({
+                    data:result[0]
+                })
+            });
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
 }
 
 exports.getOrderById = (req, res) => {
@@ -126,24 +179,3 @@ exports.addToWishlist = (req, res) => {
 exports.deleteFromWishlist = (req, res) => {
     res.send(req.params.userId + " " + req.params.wishlistId + " " + req.params.listingId)
 };
-
-function trySQL(req, res, sql) {
-    try {
-        con.connect(function(err) {
-            if (err) {
-                res.send(err)
-                return
-            }
-            console.log("Connected!");
-            con.query(sql, function(err, result) {
-                if (err) {
-                    res.send(err)
-                    return
-                }
-                return result
-            });
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
-}
