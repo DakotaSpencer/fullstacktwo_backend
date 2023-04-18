@@ -117,7 +117,7 @@ exports.updateUser = (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
-    con.end()
+
 }
 
 exports.getUser = async (req, res) => {
@@ -143,7 +143,6 @@ exports.getUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
-    con.end()
 
     console.log("Count",sql.split(","))
 }
@@ -171,7 +170,6 @@ exports.deleteUser = (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
-    con.end()
 }
 
 exports.getOrderById = (req, res) => {
