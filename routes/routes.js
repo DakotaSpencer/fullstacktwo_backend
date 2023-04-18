@@ -43,16 +43,14 @@ exports.register = (req, res) => {
     */
     let userData = req.body
     let sql = `INSERT INTO users (user_uuid,user_email,user_password,user_display_name${userData?.address?.first_name ? ",user_first_name,user_last_name,user_street_line1,user_street_line2,user_city,user_state,user_country" : ""}) VALUES (`
-    console.log("Count", sql.split(","))
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(userData.password, salt)
-    sql += `"${randomUUID()}","${userData.email}","${hash}","${userData.display_name}`
-    if (userData.address.first_name) {
-        sql += `","${userData.address.first_name}","${userData.address.last_name},","${userData.address.street[0]}","${userData.address.street?.[1] || null}","${userData.address.city}","${userData.address.state}","${userData.address.country}")`
+    sql += `"${randomUUID()}","${userData.email}","${hash}","${userData.display_name}"`
+    if (userData?.address?.first_name) {
+        sql += `,"${userData.address.first_name}","${userData.address.last_name},","${userData.address.street[0]}","${userData.address.street?.[1] || null}","${userData.address.city}","${userData.address.state}","${userData.address.country}")`
     } else {
         sql += ")"
     }
-    console.log("Count", sql.split(","))
     console.log(sql)
     con.connect(function(err) {
         if (err) {
@@ -77,7 +75,28 @@ exports.login = (req, res) => {
 exports.updateUser = (req, res) => {
     let userId = req.params.id
     let userBody = req.body
-    let sql = `UPDATE customers SET user_first_name = '${userBody.user_first_name}',  WHERE user_uuid = "${userId}"`
+    // user_email,
+    // user_password,
+    // user_display_name,
+    // user_first_name,
+    // user_last_name,
+    // user_street_line1,
+    // user_street_line2,
+    // user_city,
+    // user_state,
+    // user_country
+    let sql = `UPDATE users SET 
+    user_email = '${userBody?.user_email}', 
+    user_password = '${userBody?.user_password}', 
+    user_display_name = '${userBody?.user_display_name}', 
+    user_first_name = '${userBody?.user_first_name}', 
+    user_last_name = '${userBody?.user_last_name}',
+    user_street_line1 = '${userBody?.user_street_line1}', 
+    user_street_line2 = '${userBody?.user_street_line2}', 
+    user_city = '${userBody?.user_city}', 
+    user_state = '${userBody?.user_state}', 
+    user_country = '${userBody?.user_country}'
+    WHERE user_uuid = '${userId}'`
     try {
         con.connect(function(err) {
             if (err) {
@@ -98,6 +117,7 @@ exports.updateUser = (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
+    con.end()
 }
 
 exports.getUser = async (req, res) => {
@@ -123,6 +143,7 @@ exports.getUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
+    con.end()
 
     console.log("Count",sql.split(","))
 }
@@ -150,6 +171,7 @@ exports.deleteUser = (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message})
     }
+    con.end()
 }
 
 exports.getOrderById = (req, res) => {
