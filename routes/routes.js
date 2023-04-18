@@ -6,7 +6,7 @@ var con = mysql.createConnection({
     host: "catgirl-film-reviews.ccskcsxljvdp.us-east-1.rds.amazonaws.com",
     user: "admin",
     password: "tLXN4yhYHSkDK8R",
-    database: "cats_frontend_two"
+    database: "the_cats_cradle"
 });
 
 exports.register = (req,res) => {
@@ -112,4 +112,79 @@ exports.addToWishlist = (req,res) => {
 
 exports.deleteFromWishlist = (req,res) => {
     res.send(req.params.userId + " " + req.params.wishlistId + " " + req.params.listingId)
+}
+
+exports.createListing = (req,res) => {
+    /*
+    create table listings (
+	listing_id int auto_increment not null,
+    primary key (listing_id),
+    listing_uuid varchar(50) not null unique,
+    seller_id int not null,
+    foreign key (seller_id) references users(user_id),
+    listing_name varchar(50) not null,
+    listing_description varchar(1000),
+    listing_is_public boolean not null default(true),
+    listing_price decimal not null
+);
+
+create table listing_image_paths (
+	path_id int auto_increment not null,
+    primary key (path_id),
+    path_text varchar(50) not null,
+    path_listing_id int not null,
+    foreign key (path_listing_id) references listings(listing_id)
+);
+
+create table listing_options (
+	option_id int auto_increment not null,
+    primary key (option_id),
+    option_listing_id int,
+    foreign key (option_listing_id) references listings(listing_id),
+    option_type_name varchar(20) not null,
+    option_name varchar(30) not null,
+    option_additional_price decimal not null default(0.0)
+);
+
+create table listing_tags (
+	listing_id int not null,
+    tag_id int not null,
+    foreign key (listing_id) references listings(listing_id),
+    foreign key (tag_id) references tags(tag_id)
+)
+
+drop table if exists tags;
+create table tags (
+	tag_id int auto_increment not null,
+    primary key (tag_id),
+    tag_name varchar(20) not null
+);
+    */
+
+    /*
+    {
+        seller_id,
+        name,
+        description,
+        is_public,
+        price,
+        tags [
+            tag_name //id generated and new tag created if it doesn't exist, otherwise just a reference is added
+        ],
+        options {
+            [type_name]: [
+                option_name,
+                option_price
+            ]
+        }
+    }
+    */
+    let listingData = req.body;
+    /*
+    insert into listings (listing_uuid,seller_id,listing_name,listing_description,listing_is_public,listing_price) values ("cfc4ba05-8f34-4e5a-adb8-c307e7f6759f",1,"Bag","A bag what you can use",true,49.99);
+    INSERT INTO listing_options (option_listing_id,option_type_name,option_name,option_additional_price) VALUES	(1,"Size","Small",0);
+    */
+    let sql = `INSERT INTO LISTINGS (listing_uuid,seller_id,listing_name,listing_description,listing_is_public,listing_price) VALUES ('${crypto.randomUUID()}',${listingData.seller_id},'${listingData.name}','${listingData.description}',${listingData.is_public},${listingData.price})\n`
+    
+
 }

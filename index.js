@@ -17,9 +17,9 @@ app.post('/login', routes.login)
 
 app.put('/user', routes.updateUser)
 
-app.get('/user', routes.getUser)
+app.get('/user/:id', routes.getUser)
 
-app.delete('/user', routes.deleteUser)
+app.delete('/user/:id', routes.deleteUser)
 
 // app.post('/message', routes.createMessage)
 
@@ -38,5 +38,7 @@ app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have se
 app.get('/user/:userId/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
 
 app.delete('/wishlist/:wishlistId/delete/:listingId', routes.deleteFromWishlist)
+
+app.post("/listing",routes.createListing)
 
 app.listen(3000);
