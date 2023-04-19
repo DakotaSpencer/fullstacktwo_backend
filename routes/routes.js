@@ -216,21 +216,89 @@ exports.deleteUser = (req, res) => {
     }
 }
 
-exports.getOrderById = (req, res) => {
-    res.send(req.params.orderId)
+exports.getOrderById = (req,res) => {
+    /*
+        GET /order/{uuid}
+    */
+    const uuid = req.params.orderId;
+    let sql = "SELECT * FROM orders WHERE order_uuid = " + mysql.escape(uuid);
+
+    con.connect(function(err) {
+        if(err) {
+            res.send(err)
+            return
+        }
+        con.query(sql, function(err, result) {
+            if(err) {
+                res.send(err)
+                return
+            }
+            res.send({ result })
+        })
+    })
 }
 
-exports.createOrder = (req, res) => {
-    res.send("create order")
+exports.createOrder = (req,res) => {
+    /*
+    {
+        buyer_id: int
+        order_listing_id: int
+        order_quantity: int
+    }
+    */
+    let orderData = req.body;
+    let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${randomUUID()}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ")";
+    
+    con.connect(function(err) {
+        if(err) { 
+            res.send(err);
+            return;
+        }
+        con.query(sql, function(err, result) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            return res.send(result[0])
+        })
+    })
 }
 
-exports.updateOrder = (req, res) => {
+exports.updateOrder = (req,res) => {
+    /*
+    {
+        buyer_id: int
+        order_listing_id: int
+        order_quantity: int
+    }
+    */
     res.send("update order")
 }
 
-exports.getOrdersFromSeller = (req, res) => {
-        res.send(req.params.sellerId)
-    } //can have listing id and customer id in query params
+exports.deleteOrder = (req,res) => {
+    /*
+        DELETE /order/{uuid}
+    */
+    const uuid = req.params['orderId'];
+    let sql = "DELETE FROM orders WHERE order_uuid = " + mysql.escape(uuid);
+    con.connect(function(err) {
+        if(err) {
+            res.send(err)
+            return
+        }
+        con.query(sql, function(err, results) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+            return res.send({ 'success': true })
+        })
+    })
+}
+
+exports.getOrdersFromSeller = (req,res) => {
+    res.send(req.params.sellerId)
+} //can have listing id and customer id in query params
 
 exports.getOrdersFromBuyer = (req, res) => {
         res.send(req.params.buyerId)
