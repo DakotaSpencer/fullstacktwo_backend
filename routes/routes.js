@@ -118,16 +118,6 @@ exports.login = (req,res) => {
 exports.updateUser = (req, res) => {
     let userId = req.params.id
     let userBody = req.body
-    // user_email,
-    // user_password,
-    // user_display_name,
-    // user_first_name,
-    // user_last_name,
-    // user_street_line1,
-    // user_street_line2,
-    // user_city,
-    // user_state,
-    // user_country
     let sql = `UPDATE users SET 
     user_email = '${userBody?.user_email}', 
     user_password = '${userBody?.user_password}', 
