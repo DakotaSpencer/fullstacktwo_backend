@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const bcrypt = require("bcryptjs");
 const { randomUUID } = require('crypto');
+const { Console } = require('console');
 
 var con = mysql.createConnection({
     host: "catgirl-film-reviews.ccskcsxljvdp.us-east-1.rds.amazonaws.com",
@@ -68,8 +69,50 @@ exports.register = (req, res) => {
     });
 }
 
-exports.login = (req, res) => {
-    res.send("login")
+exports.login = (req,res) => {
+    /*
+        req:
+        {
+            user_name
+            user_password
+        }
+
+        res:
+        {
+            success (bool)
+            user_id (on success)
+            message (on failure)
+        }
+    */
+    let submitData = req.body
+    let sql = `SELECT * FROM users WHERE user_email = '${submitData.user_email}'`
+
+    con.connect(function(err) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        console.log("Connected!")
+        con.query("SELECT * FROM users WHERE user_email = " + mysql.escape(submitData.user_email), function(err, queryResult, fields) {
+            if(err) {
+                res.send(err)
+                return
+            }
+            bcrypt.compare(submitData.user_password, queryResult[0].user_password, function(err, compareResult) {
+                if(err) {
+                    res.send(err)
+                    return
+                }
+                if(compareResult) {
+                    res.send({ success: true, user_id: queryResult[0].user_uuid })
+                    return
+                } else {
+                    res.send({ success: false, message: 'passwords do not match' })
+                    return
+                }
+            })            
+        })
+    })
 }
 
 exports.updateUser = (req, res) => {
