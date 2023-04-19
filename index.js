@@ -31,6 +31,8 @@ app.post('/order', routes.createOrder)
 
 app.put('/order', routes.updateOrder)
 
+app.delete('/order/:orderId', routes.deleteOrder)
+
 app.get('/orders/seller/:sellerId', routes.getOrdersFromSeller) //can have listing id and customer id in query params
 
 app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have seller id in query params
