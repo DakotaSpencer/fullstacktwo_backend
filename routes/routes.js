@@ -89,8 +89,6 @@ exports.login = (req,res) => {
         }
     */
     let submitData = req.body
-    let sql = `SELECT * FROM users WHERE user_email = '${submitData.user_email}'`
-
     con.connect(function(err) {
         if (err) {
             res.send(err)
@@ -562,25 +560,4 @@ const addListingOptions = (listingId,options,tags,res) => {
         getTagIds(tags,listingId,res)
     });
 
-}
-
-function trySQL(req, res, sql) {
-    try {
-        con.connect(function(err) {
-            if (err) {
-                res.send(err)
-                return
-            }
-            console.log("Connected!");
-            con.query(sql, function(err, result) {
-                if (err) {
-                    res.send(err)
-                    return
-                }
-                return result
-            });
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
 }
