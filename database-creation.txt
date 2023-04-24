@@ -1,0 +1,98 @@
+drop database the_cats_cradle;
+create database the_cats_cradle;
+
+use the_cats_cradle;
+
+create table users (
+	user_id int auto_increment not null,
+    primary key (user_id),
+    user_uuid varchar(50) not null unique,
+    user_email varchar(300) not null unique,
+    user_password varchar(100) not null,
+    user_display_name varchar(50) not null unique,
+    user_first_name varchar(20),
+    user_last_name varchar(30),
+    user_street_line1 varchar(50),
+    user_street_line2 varchar(20),
+    user_city varchar(20),
+    user_state varchar(20),
+    user_country varchar(50)
+);
+
+create table listings (
+	listing_id int auto_increment not null,
+    primary key (listing_id),
+    listing_uuid varchar(50) not null unique,
+    seller_id int not null,
+    foreign key (seller_id) references users(user_id) on delete cascade,
+    listing_name varchar(50) not null,
+    listing_description varchar(1000),
+    listing_is_public boolean not null default(true),
+    listing_price decimal not null
+);
+
+create table listing_image_paths (
+	path_id int auto_increment not null,
+    primary key (path_id),
+    path_text varchar(50) not null,
+    path_listing_id int not null,
+    foreign key (path_listing_id) references listings(listing_id) on delete cascade
+);
+
+create table listing_options (
+	option_id int auto_increment not null,
+    primary key (option_id),
+    option_listing_id int,
+    foreign key (option_listing_id) references listings(listing_id) on delete cascade,
+    option_type_name varchar(20) not null,
+    option_name varchar(30) not null,
+    option_additional_price decimal not null default(0.0)
+);
+
+create table wishlists (
+	wishlist_id int auto_increment not null,
+    primary key (wishlist_id),
+    wishlist_uuid varchar(30) not null unique,
+    wishlist_name varchar(30) not null default("Likes"),
+    wishlist_user_id int not null,
+    foreign key (wishlist_user_id) references users(user_id) on delete cascade
+);
+
+create table wishlist_listings (
+	wishlist_id int not null,
+    listing_id int not null,
+    foreign key (listing_id) references listings(listing_id) on delete cascade,
+    foreign key (wishlist_id) references wishlists(wishlist_id) on delete cascade
+);
+
+drop table if exists tags;
+create table tags (
+	tag_id int auto_increment not null,
+    primary key (tag_id),
+    tag_name varchar(20) not null
+);
+
+create table listing_tags (
+	listing_id int not null,
+    tag_id int not null,
+    foreign key (listing_id) references listings(listing_id) on delete cascade,
+    foreign key (tag_id) references tags(tag_id) on delete cascade
+);
+
+create table orders (
+	order_id int auto_increment not null,
+    order_uuid varchar(50) not null unique,
+    buyer_id int,
+    foreign key (buyer_id) references users(user_id) on delete cascade,
+    primary key (order_id),
+    order_listing_id int not null,
+    foreign key (order_listing_id) references listings(listing_id) on delete cascade,
+    order_quantity int not null
+);
+
+create table order_listing_options (
+	order_id int not null,
+    foreign key (order_id) references orders(order_id) on delete cascade,
+    option_id int not null,
+    foreign key (option_id) references listing_options(option_id) on delete cascade
+)
