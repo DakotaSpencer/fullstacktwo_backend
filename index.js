@@ -39,6 +39,8 @@ app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have se
 
 app.get('/user/:userId/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
 
+app.post('/wishlist', routes.createWishlist)
+
 app.delete('/wishlist/:wishlistId/delete/:listingId', routes.deleteFromWishlist)
 
 app.post("/listing",routes.createListing)
