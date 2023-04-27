@@ -29,17 +29,21 @@ app.get('/order/:orderId', routes.getOrderById)
 
 app.post('/order', routes.createOrder)
 
-app.put('/order', routes.updateOrder)
-
 app.delete('/order/:orderId', routes.deleteOrder)
 
 app.get('/orders/seller/:sellerId', routes.getOrdersFromSeller) //can have listing id and customer id in query params
 
 app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have seller id in query params
 
-app.get('/user/:userId/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
+app.get('/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
 
 app.post('/wishlist', routes.createWishlist)
+
+app.get('/wishlist/:userId', routes.getWishlistListings)
+
+app.delete('/wishlist/:wishlistUUID', routes.deleteWishlist)
+
+app.put('/wishlist/:wishlistUUID', routes.deleteWishlist)
 
 app.delete('/wishlist/:wishlistId/delete/:listingId', routes.deleteFromWishlist)
 
