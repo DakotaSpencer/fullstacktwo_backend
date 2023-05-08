@@ -11,6 +11,12 @@ var con = mysql.createConnection({
     multipleStatements: true
 });
 
+exports.index = (req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/html');
+    res.end('<h1>Hello World</h1>');
+}
+
 exports.register = (req, res) => {
     /*user_id int auto_increment not null,
     primary key (user_id),

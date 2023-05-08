@@ -2,6 +2,7 @@ const routes = require("./routes/routes")
 const express = require("express")
 
 const app = express();
+const port=process.env.PORT || 4000
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -10,6 +11,8 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+app.get('/', routes.index)
 
 app.post('/register', routes.register)
 
@@ -53,4 +56,4 @@ app.get("/listing/:id", routes.getListingById)
 
 //app.get("/listing/seller/:id",routes.getListingBySeller)
 
-app.listen(4000);
+app.listen(port);
