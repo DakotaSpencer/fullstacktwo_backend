@@ -14,7 +14,7 @@ var con = mysql.createConnection({
 exports.index = (req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-    res.end('<h1>Hello World</h1>');
+    res.end('<h1>Connected</h1>');
 }
 
 exports.register = (req, res) => {
