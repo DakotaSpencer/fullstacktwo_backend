@@ -557,6 +557,21 @@ create table tags (
 
 };
 
+exports.getListingById = (req,res) => {
+    let listingId = req.params.id;
+    let sql =  `SELECT * FROM listings WHERE listing_id = "${listingId}";\n`
+    sql += `SELECT * FROM getListingTags WHERE listing_id = "${listingId}";\n`
+    sql += `SELECT * FROM listing_options WHERE option_listing_id = "${listingId}";\n`
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(formatListingResults(result))
+        con.end();
+    });
+}
+
 const getTagIds = (tags,id,res) => {
     let sql = 'INSERT IGNORE INTO tags (tag_name) VALUES '
     let sqlLinetwo = "SELECT tag_id from tags WHERE tag_name = "
