@@ -96,3 +96,10 @@ create table order_listing_options (
     option_id int not null,
     foreign key (option_id) references listing_options(option_id) on delete cascade
 )
+
+drop view if exists getWishlistListings;
+create view getWishlistListings as
+select listing_uuid, wishlist_uuid, wishlists.wishlist_name, user_uuid from wishlists
+left join wishlist_listings on wishlist_listings.wishlist_id = wishlists.wishlist_id
+left join listings on listings.listing_id = wishlist_listings.listing_id
+left join users on wishlist_user_id = user_id
