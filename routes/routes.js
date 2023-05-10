@@ -574,7 +574,6 @@ exports.getListingById = (req,res) => {
             return
         }
         res.json(formatListingResults(result))
-        con.end();
     });
 }
 
