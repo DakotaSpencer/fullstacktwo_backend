@@ -62,20 +62,12 @@ exports.register = (req, res) => {
     }
     sql += `\nSELECT user_uuid FROM users WHERE user_uuid = '${uuid}'`
     console.log(sql)
-    con.connect(function(err) {
+    con.query(sql,[1,2], function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        console.log("Connected!");
-        con.query(sql,[1,2], function(err, result) {
-            if (err) {
-                res.send(err)
-                return
-            }
-            res.json(result[1])
-            con.end();
-        });
+        res.json(result[1])
     });
 }
 
@@ -95,33 +87,24 @@ exports.login = (req,res) => {
         }
     */
     let submitData = req.body
-    con.connect(function(err) {
-        if (err) {
+    con.query("SELECT * FROM users WHERE user_email = " + mysql.escape(submitData.user_email), function(err, queryResult, fields) {
+        if(err) {
             res.send(err)
             return
         }
-        console.log("Connected!")
-        con.query("SELECT * FROM users WHERE user_email = " + mysql.escape(submitData.user_email), function(err, queryResult, fields) {
+        bcrypt.compare(submitData.user_password, queryResult[0].user_password, function(err, compareResult) {
             if(err) {
                 res.send(err)
                 return
             }
-            bcrypt.compare(submitData.user_password, queryResult[0].user_password, function(err, compareResult) {
-                if(err) {
-                    res.send(err)
-                    return
-                }
-                if(compareResult) {
-                    res.send({ success: true, user_id: queryResult[0].user_uuid })
-                    con.end();
-                    return
-                } else {
-                    res.send({ success: false, message: 'passwords do not match' })
-                    con.end();
-                    return
-                }
-            })            
-        })
+            if(compareResult) {
+                res.send({ success: true, user_id: queryResult[0].user_uuid })
+                return
+            } else {
+                res.send({ success: false, message: 'passwords do not match' })
+                return
+            }
+        })            
     })
 }
 
@@ -152,27 +135,17 @@ exports.updateUser = (req, res) => {
     if(userBody.user_country != null) { sql += ` user_country = ` + mysql.escape(userBody.user_country)}
     sql += `WHERE user_uuid = ` + mysql.escape(userId)
     try {
-        con.connect(function(err) {
+        con.query(sql, function (err, result) {
             if (err) {
                 res.send(err)
                 return
             }
-            console.log("Connected!");
-            con.query(sql, function (err, result) {
-                if (err) {
-                    res.send(err)
-                    con.end();
-                    return
-                }
-                res.send({
-                    data: result[0]
-                })
-                con.end();
-            });
+            res.send({
+                data: result[0]
+            })
         });
     } catch (error) {
         res.status(500).json({error: error.message})
-        con.end();
     }
 
 }
@@ -181,24 +154,14 @@ exports.getUser = async (req, res) => {
     let userId = req.params.id
     let sql = `SELECT * FROM users WHERE user_uuid = "${userId}"`
     try {
-        con.connect(function(err) {
+        con.query(sql, function (err, result) {
             if (err) {
                 res.send(err)
-                con.end();
                 return
             }
-            console.log("Connected!");
-            con.query(sql, function (err, result) {
-                if (err) {
-                    res.send(err)
-                    con.end();
-                    return
-                }
-                res.status(200).json({
-                    data:result[0]
-                })
-                con.end();
-            });
+            res.status(200).json({
+                data:result[0]
+            })
         });
     } catch (error) {
         res.status(500).json({error: error.message})
@@ -211,28 +174,17 @@ exports.deleteUser = (req, res) => {
     let userId = req.params.id
     let sql = `DELETE FROM users WHERE user_uuid = "${userId}"`
     try {
-        con.connect(function(err) {
+        con.query(sql, function (err, result) {
             if (err) {
                 res.send(err)
-                con.end();
                 return
             }
-            console.log("Connected!");
-            con.query(sql, function (err, result) {
-                if (err) {
-                    res.send(err)
-                    con.end();
-                    return
-                }
-                res.status(200).json({
-                    data:result[0]
-                })
-                con.end();
-            });
+            res.status(200).json({
+                data:result[0]
+            })
         });
     } catch (error) {
         res.status(500).json({error: error.message})
-        con.end();
     }
 }
 
@@ -243,20 +195,12 @@ exports.getOrderById = (req,res) => {
     const uuid = req.params.orderId;
     let sql = "SELECT * FROM orders WHERE order_uuid = " + mysql.escape(uuid);
 
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if(err) {
             res.send(err)
             return
         }
-        con.query(sql, function(err, result) {
-            if(err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.send({ result })
-            con.end();
-        })
+        res.send({ result })
     })
 }
 
@@ -271,20 +215,12 @@ exports.createOrder = (req,res) => {
     let orderData = req.body;
     let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${randomUUID()}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ")";
     
-    con.connect(function(err) {
-        if(err) { 
-            res.send(err);
-            return;
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.send(result[0])
-            con.end();
-        })
+        res.send(result[0])
     })
 }
 
@@ -305,20 +241,12 @@ exports.deleteOrder = (req,res) => {
     */
     const uuid = req.params['orderId'];
     let sql = "DELETE FROM orders WHERE order_uuid = " + mysql.escape(uuid);
-    con.connect(function(err) {
-        if(err) {
-            res.send(err)
-            return
+    con.query(sql, function(err, results) {
+        if (err) {
+            res.send(err);
+            return;
         }
-        con.query(sql, function(err, results) {
-            if (err) {
-                res.send(err);
-                con.end();
-                return;
-            }
-            res.send({ 'success': true })
-            con.end();
-        })
+        res.send({ 'success': true })
     })
 }
 
@@ -334,58 +262,35 @@ exports.getWishlistListings = (req,res) => {
     
     let sql = `select * from getWishlistListings where user_uuid = "${req.params.userId}"`
     console.log(sql)
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.json(result)
-            con.end();
-        });
+        res.json(result)
     });
 }
 
 exports.addToWishlist = (req, res) => {
     let sql = `INSERT INTO wishlist_listings (listing_id,wishlist_id) VALUES (${req.params.listingId},${req.params.wishlistId})`
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                return
-            }
-            res.json({response:"Listing Added"})
-            con.end();
-        });
+        res.json({response:"Listing Added"})
     });
 }
 
 exports.deleteFromWishlist = (req, res) => {
     let sql = `DELETE FROM wishlist_listings WHERE listing_id = ${req.params.listingId} and wishlist_id = ${req.params.wishlistId}`
     console.log(sql)
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.json({response:"Listing Deleted"})
-            con.end();
-        });
+        res.json({response:"Listing Deleted"})
     });
 }
 
@@ -413,62 +318,36 @@ create table wishlist_listings (
     const uuid = randomUUID();
     let sql = `INSERT INTO wishlists (wishlist_uuid,wishlist_name,wishlist_user_id) VALUES ("${uuid}","${req.body.wishlist_name}",${req.body.user_id});
     SELECT * FROM wishlists WHERE wishlist_uuid = "${uuid}"`
-    con.connect(function(err) {
+    con.query(sql,[1,2], function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        con.query(sql,[1,2], function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.json(result[1])
-            con.end();
-        });
+        res.json(result[1])
     });
 }
 
 exports.updateWishlist = (req,res) => {
     let sql = `UPDATE wishlists SET wishlist_name = "${req.params.name}" WHERE wishlist_uuid = "${req.params.wishlistUUID}"`
     console.log(sql)
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
-            con.end();
             return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.json({response:"List Deleted"})
-            con.end();
-        });
+        res.json({response:"List Deleted"})
     });
 }
 
 exports.deleteWishlist = (req,res) => {
     let sql = `DELETE FROM wishlists WHERE wishlist_uuid = "${req.params.wishlistUUID}"`
     console.log(sql)
-    con.connect(function(err) {
+    con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
-            con.end();
             return
         }
-        con.query(sql, function(err, result) {
-            if (err) {
-                res.send(err)
-                con.end();
-                return
-            }
-            res.json({response:"List Deleted"})
-            con.end();
-        });
+        res.json({response:"List Deleted"})
     });
 }
 
@@ -545,19 +424,12 @@ create table tags (
     const uuid = randomUUID();
     let sql = `INSERT INTO listings (listing_uuid,seller_id,listing_name,listing_description,listing_is_public,listing_price) VALUES ('${uuid}',${listingData.seller_id},'${listingData.name}','${listingData.description}',${listingData.is_public},${listingData.price});\n`
     sql += `SELECT * FROM listings WHERE listing_uuid = '${uuid}'`
-    con.connect(function(err) {
+    con.query(sql,[1,2], function(err, result) {
         if (err) {
             res.send(err)
-            con.end();
             return
         }
-        con.query(sql,[1,2], function(err, result) {
-            if (err) {
-                res.send(err)
-                return
-            }
-            addListingOptions(result[1][0].listing_id,listingData.options,listingData.tags,res)
-        });
+        addListingOptions(result[1][0].listing_id,listingData.options,listingData.tags,res)
     });
     
 
@@ -614,7 +486,6 @@ const addListingTags = (tagIds,listingId,res) => {
             return
         }
         res.json(formatListingResults(result.slice(1)))
-        con.end();
     });
 }
 
