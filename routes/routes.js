@@ -205,6 +205,7 @@ exports.getOrderById = (req,res) => {
 }
 
 exports.createOrder = (req,res) => {
+    res.send("Get order")
     /*
     {
         buyer_id: int
@@ -212,16 +213,16 @@ exports.createOrder = (req,res) => {
         order_quantity: int
     }
     */
-    let orderData = req.body;
-    let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${randomUUID()}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ")";
+    // let orderData = req.body;
+    // let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${randomUUID()}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ")";
     
-    con.query(sql, function(err, result) {
-        if (err) {
-            res.send(err)
-            return
-        }
-        res.send(result[0])
-    })
+    // con.query(sql, function(err, result) {
+    //     if (err) {
+    //         res.send(err)
+    //         return
+    //     }
+    //     res.send(result[0])
+    // })
 }
 
 exports.updateOrder = (req,res) => {
@@ -437,9 +438,9 @@ create table tags (
 
 exports.getListingById = (req,res) => {
     let listingId = req.params.id;
-    let sql =  `SELECT * FROM listings WHERE listing_id = "${listingId}";\n`
-    sql += `SELECT * FROM getListingTags WHERE listing_id = "${listingId}";\n`
-    sql += `SELECT * FROM listing_options WHERE option_listing_id = "${listingId}";\n`
+    let sql =  `SELECT * FROM getListing WHERE listing_uuid = "${listingId}";\n`
+    sql += `SELECT * FROM getListingTags WHERE listing_uuid = "${listingId}";\n`
+    sql += `SELECT * FROM getListingOptions WHERE listing_uuid = "${listingId}";\n`
     con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
@@ -477,7 +478,7 @@ const addListingTags = (tagIds,listingId,res) => {
         if (index < tagIds.length-1)
             sql += ","
     })
-    sql +=  `;\nSELECT * FROM listings WHERE listing_id = ${listingId};\n`
+    sql +=  `;\nSELECT * FROM getListing WHERE listing_id = ${listingId};\n`
     sql += `SELECT * FROM getListingTags WHERE listing_id = ${listingId};\n`
     sql += `SELECT * FROM listing_options WHERE option_listing_id = ${listingId};\n`
     con.query(sql, function(err, result) {
@@ -492,7 +493,8 @@ const addListingTags = (tagIds,listingId,res) => {
 const formatListingResults = (listingData) => {
 
     /*{
-        seller_id,
+        seller_display_name,
+        seller_uuid,
         name,
         description,
         is_public,
@@ -604,4 +606,16 @@ const addListingOptions = (listingId,options,tags,res) => {
         getTagIds(tags,listingId,res)
     });
 
+}
+
+exports.searchListings = (req,res) => {
+    const query = req.query.q;
+    let sql = `SELECT * FROM getListing WHERE listing_name LIKE '%${query}%' OR seller_name LIKE '%${query}%'`
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(result)
+    });
 }

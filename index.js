@@ -56,6 +56,8 @@ app.post("/listing",routes.createListing)
 
 app.get("/listing/:id", routes.getListingById)
 
+app.get("/search", routes.searchListings)
+
 //app.get("/listing/seller/:id",routes.getListingBySeller)
 
 app.listen(port);
