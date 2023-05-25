@@ -437,13 +437,14 @@ create table tags (
 };
 
 exports.getAllListings = (req, res) => {
-    let sql =  `SELECT * FROM getListing;`
+    let sql =  `SELECT * FROM listings;`
+
     con.query(sql, function(err, result) {
         if (err) {
             res.send(err)
             return
         }
-        res.json(formatListingResults(result))
+        res.json(result)
     });
 }
 
