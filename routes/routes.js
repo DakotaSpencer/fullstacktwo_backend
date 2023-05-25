@@ -436,6 +436,17 @@ create table tags (
 
 };
 
+exports.getAllListings = (req, res) => {
+    let sql =  `SELECT * FROM getListing;`
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(formatListingResults(result))
+    });
+}
+
 exports.getListingById = (req,res) => {
     let listingId = req.params.id;
     let sql =  `SELECT * FROM getListing WHERE listing_uuid = "${listingId}";\n`
