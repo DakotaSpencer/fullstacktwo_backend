@@ -437,7 +437,7 @@ create table tags (
 };
 
 exports.getAllListings = (req, res) => {
-    let sql =  `SELECT * FROM listings;`
+    let sql =  `SELECT * FROM listings WHERE listing_is_public = 1 ORDER BY listing_id DESC;`
 
     con.query(sql, function(err, result) {
         if (err) {
