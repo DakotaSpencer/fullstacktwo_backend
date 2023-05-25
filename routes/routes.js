@@ -1,7 +1,6 @@
 const mysql = require('mysql');
 const bcrypt = require("bcryptjs");
 const { randomUUID } = require('crypto');
-const { Console } = require('console');
 
 var con = mysql.createConnection({
     host: "catgirl-film-reviews.ccskcsxljvdp.us-east-1.rds.amazonaws.com",
@@ -606,6 +605,61 @@ const addListingOptions = (listingId,options,tags,res) => {
         getTagIds(tags,listingId,res)
     });
 
+}
+
+exports.deleteListing = (req,res) => {
+    let listingId = req.params.id
+    let sql = `DELETE FROM listings WHERE listing_uuid = "${listingId}"`
+    try {
+        con.query(sql, function (err, result) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            res.status(200).json({
+                data:result[0]
+            })
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
+}
+
+exports.updateListing = (req,res) => {
+    let listingUUID = req.params.id
+    let listingData = req.body
+    //listing_name, listing_description, listing_is_public, listing_price
+    let sql = `UPDATE users SET`;
+    listingData.listing_name ?  sql += ` listing_name = ` + mysql.escape(listingData.listing_name) : ""
+    listingData.listing_description ?  sql += ` listing_description = ` + mysql.escape(listingData.listing_description) : ""
+    listingData.listing_is_public ?  sql += ` listing_is_public = ` + mysql.escape(listingData.listing_is_public) : ""
+    listingData.listing_price ?  sql += ` listing_price = ` + mysql.escape(listingData.listing_price) : ""
+    sql += `WHERE listing_uuid = ` + mysql.escape(listingUUID)
+    try {
+        con.query(sql, function (err, result) {
+            if (err) {
+                res.send(err)
+                return
+            }
+            res.send({
+                data: result[0]
+            })
+        });
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
+}
+
+exports.deleteListingTag = (req,res) => {
+    
+}
+
+exports.addListingTag = (req,res) => {
+    
+}
+
+exports.updateListingOptions = (req,res) => {
+    
 }
 
 exports.searchListings = (req,res) => {
