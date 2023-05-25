@@ -13,7 +13,7 @@ var con = mysql.createConnection({
 exports.index = (req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-    res.end('<h1>Connected UwU</h1>');
+    res.end('<h1>Connected To Backend</h1>');
 }
 
 exports.register = (req, res) => {
@@ -434,6 +434,18 @@ create table tags (
     
 
 };
+
+exports.getAllListings = (req, res) => {
+    let sql =  `SELECT * FROM listings WHERE listing_is_public = 1 ORDER BY listing_id DESC;`
+
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(result)
+    });
+}
 
 exports.getListingById = (req,res) => {
     let listingId = req.params.id;
