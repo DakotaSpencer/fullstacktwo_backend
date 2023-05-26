@@ -204,24 +204,48 @@ exports.getOrderById = (req,res) => {
 }
 
 exports.createOrder = (req,res) => {
-    res.send("Get order")
     /*
     {
         buyer_id: int
         order_listing_id: int
         order_quantity: int
+        options: [
+            ids
+        ]
     }
     */
-    // let orderData = req.body;
-    // let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${randomUUID()}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ")";
+    let orderData = req.body;
+    console.log(req.body)
+    const uuid = randomUUID()
+    let sql = "INSERT INTO orders (order_uuid, buyer_id, order_listing_id, order_quantity) VALUES (" + `"${uuid}"` + ", " + orderData.buyer_id + ", " + orderData.order_listing_id + ", " + orderData.order_quantity + ");\n";
+    sql += `SELECT order_id,order_uuid FROM orders where order_uuid = "${uuid}"`
     
-    // con.query(sql, function(err, result) {
-    //     if (err) {
-    //         res.send(err)
-    //         return
-    //     }
-    //     res.send(result[0])
-    // })
+    con.query(sql,[1,2], function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        if (orderData?.options?.length) {
+            addOrderOptions(orderData.options,result[1][0],res)
+        } else {
+            res.send(result[1])
+        }
+    })
+}
+
+const addOrderOptions = (options,orderIds,res) => {
+    let sql = "INSERT INTO order_listing_options (option_id,order_id) VALUES "
+    options.forEach((id,index) => {
+        sql += `(${id},${orderIds.order_id})${index == options.length-1 ? ";" : ","}\n`
+    })
+    sql += `SELECT * FROM getOrders WHERE order_uuid = '${orderIds.order_uuid}'`
+    con.query(sql,[1,2], function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(result[1])
+    })
 }
 
 exports.updateOrder = (req,res) => {
@@ -233,21 +257,6 @@ exports.updateOrder = (req,res) => {
     }
     */
     res.send("update order")
-}
-
-exports.deleteOrder = (req,res) => {
-    /*
-        DELETE /order/{uuid}
-    */
-    const uuid = req.params['orderId'];
-    let sql = "DELETE FROM orders WHERE order_uuid = " + mysql.escape(uuid);
-    con.query(sql, function(err, results) {
-        if (err) {
-            res.send(err);
-            return;
-        }
-        res.send({ 'success': true })
-    })
 }
 
 exports.getOrdersFromSeller = (req,res) => {
