@@ -578,11 +578,11 @@ const formatListingResults = (listingData) => {
     let tags = []
     let options = {}
     listingData[1].forEach(tag => {
-        tags = [...tags,tag.tag_name]
+        tags = [...tags,{name:tag.tag_name,id:tag.tag_id}]
     })
     listingData[2].forEach(option => {
         options[option.option_type_name] = options[option.option_type_name] || []
-        options[option.option_type_name] = [...options[option.option_type_name],{name:option.option_name,price:option.option_additional_price}]
+        options[option.option_type_name] = [...options[option.option_type_name],{name:option.option_name,price:option.option_additional_price,id:option.option_id}]
     })
     output = {...output,tags,options}
     return output
