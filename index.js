@@ -32,11 +32,9 @@ app.delete('/user/:id', routes.deleteUser)
 
 app.get('/order/:orderId', routes.getOrderById)
 
+app.get('/order', routes.getOrders)
+
 app.post('/order', routes.createOrder)
-
-app.get('/orders/seller/:sellerId', routes.getOrdersFromSeller) //can have listing id and customer id in query params
-
-app.get('/orders/customer/:customerId', routes.getOrdersFromBuyer) //can have seller id in query params
 
 app.get('/wishlist/:wishlistId/add/:listingId', routes.addToWishlist)
 

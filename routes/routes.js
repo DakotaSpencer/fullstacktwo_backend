@@ -248,24 +248,22 @@ const addOrderOptions = (options,orderIds,res) => {
     })
 }
 
-exports.updateOrder = (req,res) => {
-    /*
-    {
-        buyer_id: int
-        order_listing_id: int
-        order_quantity: int
+exports.getOrders = (req,res) => {
+    const buyer = req.query.buyer;
+    const seller = req.query.seller;
+    let sql = "SELECT * FROM getOrders"
+    if (buyer || seller) {
+        sql += ` WHERE ${buyer ? `buyer_uuid = "${buyer}"` : ""} ${buyer && seller ? "AND" : ""} ${seller ? `seller_uuid = "${seller}"` : ""}`
     }
-    */
-    res.send("update order")
+    console.log(sql)
+    con.query(sql, function(err, result) {
+        if (err) {
+            res.send(err)
+            return
+        }
+        res.json(result)
+    })
 }
-
-exports.getOrdersFromSeller = (req,res) => {
-    res.send(req.params.sellerId)
-} //can have listing id and customer id in query params
-
-exports.getOrdersFromBuyer = (req, res) => {
-        res.send(req.params.buyerId)
-    } //can have seller id in query params
 
 exports.getWishlistListings = (req,res) => {
     
