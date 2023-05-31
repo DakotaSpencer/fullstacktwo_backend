@@ -342,7 +342,7 @@ exports.updateWishlist = (req,res) => {
             res.send(err)
             return
         }
-        res.json({response:"List Deleted"})
+        res.json({response:"List Updated"})
     });
 }
 
