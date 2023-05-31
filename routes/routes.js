@@ -192,14 +192,14 @@ exports.getOrderById = (req,res) => {
         GET /order/{uuid}
     */
     const uuid = req.params.orderId;
-    let sql = "SELECT * FROM orders WHERE order_uuid = " + mysql.escape(uuid);
+    let sql = "SELECT * FROM getOrders WHERE order_uuid = " + mysql.escape(uuid);
 
     con.query(sql, function(err, result) {
         if(err) {
             res.send(err)
             return
         }
-        res.send({ result })
+        res.send(result[0])
     })
 }
 
