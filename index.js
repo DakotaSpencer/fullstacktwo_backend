@@ -44,8 +44,6 @@ app.get('/wishlist/:userId', routes.getWishlistListings)
 
 app.delete('/wishlist/:wishlistUUID', routes.deleteWishlist)
 
-app.put('/wishlist/:wishlistUUID', routes.deleteWishlist)
-
 app.delete('/wishlist/:wishlistId/delete/:listingId', routes.deleteFromWishlist)
 
 app.post("/listing",routes.createListing)
